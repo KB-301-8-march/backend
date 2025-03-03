@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Нужно быть быстрее</title>
+    <script>
+        document.addEventListener('DOMContentLoaded', (event) => {
+            // Устанавливаем значение в sessionStorage
+            sessionStorage.setItem('code', 'секретный_код');
+
+            // Функция для очистки sessionStorage каждые 10 секунд
+            setInterval(() => {
+                sessionStorage.removeItem('code');
+                console.log('Session storage очищен');
+            }, 10000);
+
+            // Пример отправки запроса с данными из sessionStorage
+            document.getElementById('sendRequest').addEventListener('click', () => {
+                const code = sessionStorage.getItem('code');
+                if (code) {
+                    fetch('/lowercase', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({data: code})
+                    }).then(response => response.json())
+                      .then(data => console.log(data));
+                } else {
+                    console.log('Код не найден в sessionStorage');
+                }
+            });
+        });
+    </script>
+</head>
+<body>
+    <h1>Нужно быть быстрее!</h1>
+    <button id="sendRequest">Отправить запрос</button>
+    <p>Код будет очищен из sessionStorage каждые 10 секунд.</p>
+</body>
+</html> 
