@@ -1,0 +1,7 @@
+services:
+  backend-app:
+    container_name: backend
+    build: .
+    ports:
+      - 8000:8000
+    command: uvicorn main:app --reload # Команда для запуска приложения
