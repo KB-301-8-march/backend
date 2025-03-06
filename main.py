@@ -131,6 +131,22 @@ def get_temp_password(key: str):
             "error": 'Попытка не пытка'
         }
 
+
+@app.get("/guess_who")
+def get_temp_password(surname: str, code: str):
+    validation = {
+        code: '427003_166136574',
+        surname: 'Новак'
+    }
+    if validation.get('code') == code and validation.get('surname') == surname:
+        return {
+            'new_link': '/authors'
+        }
+    else:
+        return {
+            'error': '"Отчислен" - Макаров А.В.'
+        }
+
 # @app.post("/lowercase")
 # async def lowercase(request: Request):
 #     data = await request.json()
