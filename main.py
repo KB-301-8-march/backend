@@ -132,8 +132,12 @@ def get_temp_password(key: str):
         }
 
 
+count_tries = 0
+
+
 @app.get("/guess_who")
 def get_temp_password(surname: str, code: str):
+    global count_tries
     validation = {
         code: '427003_166136574',
         surname: 'Новак'
@@ -143,9 +147,16 @@ def get_temp_password(surname: str, code: str):
             'new_link': '/authors'
         }
     else:
-        return {
-            'error': '"Отчислен" - Макаров А.В.'
-        }
+        if count_tries > 3:
+            count_tries = 0
+            return {
+                'error': '"Отчислен" - Макаров А.В.'
+            }
+        else:
+            count_tries += 1
+            return {
+                'error': 'Ошибка'
+            }
 
 # @app.post("/lowercase")
 # async def lowercase(request: Request):
