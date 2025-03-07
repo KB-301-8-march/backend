@@ -89,17 +89,17 @@ async def youneedtobefaster(request: Request):
 
 
 temp_password = ""
-time_left = 10  # Время до обновления пароля в секундах
+time_left = 3  # Время до обновления пароля в секундах
 
 
 def generate_temp_password():
     global temp_password, time_left
     while True:
         temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-        time_left = 10  # После обновления пароля обнуляем счетчик
+        time_left = 3  # После обновления пароля обнуляем счетчик
 
         # Уменьшаем счетчик времени до обновления
-        for _ in range(10):
+        for _ in range(3):
             time.sleep(1)
             time_left -= 1
 
