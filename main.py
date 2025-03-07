@@ -124,7 +124,7 @@ def get_temp_password():
 def get_temp_password(key: str):
     if key == temp_password:
         return {
-            'new_link': '/LOWER_CASE'
+            'new_link': '/must_have_to_know'
         }
     else:
         return {
