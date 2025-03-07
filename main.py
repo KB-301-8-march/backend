@@ -3,6 +3,7 @@ import logging
 import random
 import string
 import time
+from contextlib import asynccontextmanager
 from threading import Thread
 
 from fastapi import FastAPI, Form, Request
@@ -11,7 +12,34 @@ from fastapi.responses import RedirectResponse
 from fastapi.staticfiles import StaticFiles
 from fastapi.templating import Jinja2Templates
 
-app = FastAPI()
+
+
+temp_password = ""
+time_left = 3  # Время до обновления пароля в секундах
+
+
+def generate_temp_password():
+    global temp_password, time_left
+    while True:
+        temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
+        time_left = 3  # После обновления пароля обнуляем счетчик
+
+        # Уменьшаем счетчик времени до обновления
+        for _ in range(3):
+            time.sleep(1)
+            time_left -= 1
+
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    # Запускаем генерацию пароля в отдельном потоке
+    password_thread = Thread(target=generate_temp_password)
+    password_thread.daemon = True
+    password_thread.start()
+    yield
+    # Здесь можно добавить код для остановки потока, если это необходимо
+
+app = FastAPI(lifespan=lifespan)
 
 allowed_values = {
     "Катя",
@@ -86,31 +114,6 @@ async def authors(request: Request):
 @app.get("/youneedtobefaster")
 async def youneedtobefaster(request: Request):
     return templates.TemplateResponse("youneedtobefaster.html", {"request": request})
-
-
-temp_password = ""
-time_left = 10  # Время до обновления пароля в секундах
-
-
-def generate_temp_password():
-    global temp_password, time_left
-    while True:
-        temp_password = ''.join(random.choices(string.ascii_letters + string.digits, k=8))
-        time_left = 10  # После обновления пароля обнуляем счетчик
-
-        # Уменьшаем счетчик времени до обновления
-        for _ in range(10):
-            time.sleep(1)
-            time_left -= 1
-
-
-@app.on_event("startup")
-def start_password_generation():
-    # Запускаем генерацию пароля в отдельном потоке
-    password_thread = Thread(target=generate_temp_password)
-    password_thread.daemon = True
-    password_thread.start()
-
 
 @app.get("/tmp_key")
 def get_temp_password():
