@@ -122,7 +122,7 @@ def get_temp_password():
 
 @app.get("/sendme")
 def get_temp_password(key: str):
-    if key == temp_password:
+    if key and len(key) > 0 and key == temp_password:
         return {
             'new_link': '/must_have_to_know'
         }
